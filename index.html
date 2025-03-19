@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NumberNinja - Daily Number Guessing Game</title>
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --secondary-color: #7b1fa2;
+            --accent-color: #ff9100;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --correct-color: #4caf50;
+            --partial-color: #ffeb3b;
+            --incorrect-color: #9e9e9e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .game-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .mode-switch {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary-color);
+        }
+
+        .guesses-container {
+            margin-bottom: 20px;
+        }
+
+        .guess-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .guess-digit {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .guess-digit.correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+        }
+
+        .guess-digit.partial {
+            background-color: var(--partial-color);
+            color: var(--text-color);
+            border-color: var(--partial-color);
+        }
+
+        .guess-digit.incorrect {
+            background-color: var(--incorrect-color);
+            color: white;
+            border-color: var(--incorrect-color);
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .digit-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .digit-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .submit-btn:hover {
+            background-color: #f57c00;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .num-btn {
+            background-color: #eee;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .num-btn:hover {
+            background-color: #ddd;
+        }
+
+        .num-btn.action {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .num-btn.action:hover {
+            background-color: var(--primary-color);
+        }
+
+        .ad-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f1f1f1;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .ad-container p {
+            color: #888;
+        }
+
+        .game-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .share-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .share-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .message.success {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #2e7d32;
+        }
+
+        .message.error {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #c62828;
+        }
+
+        @media (max-width: 400px) {
+            .guess-digit, .digit-input {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .num-btn {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>NumberNinja</h1>
+        <p class="subtitle">Guess the 4-digit number</p>
+    </header>
+
+    <div class="mode-switch">
+        <button class="mode-btn active">Daily Challenge</button>
+        <button class="mode-btn">Practice Mode</button>
+        <button class="mode-btn">Easy Mode</button>
+        <button class="mode-btn">Hard Mode</button>
+    </div>
+
+    <div class="game-container">
+        <div class="guesses-container" id="guesses">
+            <!-- Guess rows will be added here -->
+        </div>
+
+        <div class="input-row" id="input-row">
+            <input type="text" class="digit-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+            <input type="text" class="digit-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+            <input type="text" class="digit-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+            <input type="text" class="digit-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+        </div>
+
+        <button class="submit-btn" id="submit-guess">Guess</button>
+
+        <div class="numpad">
+            <button class="num-btn">1</button>
+            <button class="num-btn">2</button>
+            <button class="num-btn">3</button>
+            <button class="num-btn">4</button>
+            <button class="num-btn">5</button>
+            <button class="num-btn">6</button>
+            <button class="num-btn">7</button>
+            <button class="num-btn">8</button>
+            <button class="num-btn">9</button>
+            <button class="num-btn action" id="clear-btn">Clear</button>
+            <button class="num-btn">0</button>
+            <button class="num-btn action" id="backspace-btn">⌫</button>
+        </div>
+    </div>
+
+    <div class="ad-container">
+        <p>Advertisement</p>
+        <!-- Ad will be placed here -->
+    </div>
+
+    <div class="game-footer">
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Played</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Won</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </div>
+        <button class="share-btn">Share</button>
+    </div>
+
+    <script>
+        const numberNinja = {
+            // Game state
+            state: {
+                mode: 'daily', // 'daily', 'practice', 'easy', 'hard'
+                targetNumber: '',
+                guesses: [],
+                maxGuesses: 6,
+                currentGuess: ['', '', '', ''],
+                gameOver: false,
+                won: false,
+                digitCount: 4,
+                stats: {
+                    played: 0,
+                    won: 0,
+                    currentStreak: 0,
+                    maxStreak: 0,
+                    lastPlayed: null
+                }
+            },
+
+            // Initialize the game
+            init: function() {
+                this.loadStats();
+                this.setupEventListeners();
+                this.checkDailyStatus();
+                this.startGame();
+            },
+
+            // Load saved statistics from localStorage
+            loadStats: function() {
+                const savedStats = localStorage.getItem('numberNinjaStats');
+                if (savedStats) {
+                    this.state.stats = JSON.parse(savedStats);
+                }
+                this.updateStatsDisplay();
+            },
+
+            // Save statistics to localStorage
+            saveStats: function() {
+                localStorage.setItem('numberNinjaStats', JSON.stringify(this.state.stats));
+                this.updateStatsDisplay();
+            },
+
+            // Update the statistics display in the UI
+            updateStatsDisplay: function() {
+                const statValues = document.querySelectorAll('.stat-value');
+                statValues[0].textContent = this.state.stats.played;
+                statValues[1].textContent = this.state.stats.won;
+                statValues[2].textContent = this.state.stats.currentStreak;
+            },
+
+            // Set up event listeners
+            setupEventListeners: function() {
+                // Number buttons
+                document.querySelectorAll('.num-btn').forEach(button => {
+                    if (!button.classList.contains('action')) {
+                        button.addEventListener('click', () => {
+                            this.addDigit(button.textContent);
+                        });
+                    }
+                });
+
+                // Clear button
+                document.getElementById('clear-btn').addEventListener('click', () => {
+                    this.clearInput();
+                });
+
+                // Backspace button
+                document.getElementById('backspace-btn').addEventListener('click', () => {
+                    this.removeLastDigit();
+                });
+
+                // Digit inputs
+                document.querySelectorAll('.digit-input').forEach((input, index) => {
+                    input.addEventListener('input', (e) => {
+                        if (e.target.value) {
+                            this.state.currentGuess[index] = e.target.value;
+                            if (index < this.state.digitCount - 1) {
+                                document.querySelectorAll('.digit-input')[index + 1].focus();
+                            }
+                        }
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                            document.querySelectorAll('.digit-input')[index - 1].focus();
+                        }
+                    });
+                });
+
+                // Submit button
+                document.getElementById('submit-guess').addEventListener('click', () => {
+                    this.submitGuess();
+                });
+
+                // Mode switching
+                document.querySelectorAll('.mode-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        if (this.state.gameOver || confirm('Changing mode will reset your current game. Continue?')) {
+                            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+                            
+                            if (button.textContent.includes('Daily')) {
+                                this.state.mode = 'daily';
+                                this.state.digitCount = 4;
+                            } else if (button.textContent.includes('Practice')) {
+                                this.state.mode = 'practice';
+                                this.state.digitCount = 4;
+                            } else if (button.textContent.includes('Easy')) {
+                                this.state.mode = 'easy';
+                                this.state.digitCount = 3;
+                            } else {
+                                this.state.mode = 'hard';
+                                this.state.digitCount = 5;
+                            }
+                            
+                            this.resetGame();
+                            this.startGame();
+                        }
+                    });
+                });
+
+                // Share button
+                document.querySelector('.share-btn').addEventListener('click', () => {
+                    this.shareResults();
+                });
+            },
+
+            // Check if the daily challenge has been played today
+            checkDailyStatus: function() {
+                const today = new Date().toDateString();
+                
+                if (this.state.mode === 'daily' && this.state.stats.lastPlayed === today) {
+                    // Already played today's challenge
+                    this.showAlreadyPlayedMessage();
+                }
+            },
+
+            // Start a new game
+            startGame: function() {
+                this.state.guesses = [];
+                this.state.gameOver = false;
+                this.state.won = false;
+                this.clearInput();
+                
+                // Update input fields based on digit count
+                this.updateInputFields();
+                
+                // Generate target number
+                this.generateTargetNumber();
+                
+                // Clear guesses display
+                document.getElementById('guesses').innerHTML = '';
+                
+                // For debugging
+                console.log('Target number:', this.state.targetNumber);
+            },
+
+            // Update input fields based on digit count
+            updateInputFields: function() {
+                const inputRow = document.getElementById('input-row');
+                inputRow.innerHTML = '';
+                
+                for (let i = 0; i < this.state.digitCount; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'digit-input';
+                    input.maxLength = 1;
+                    input.pattern = '[0-9]';
+                    input.inputMode = 'numeric';
+                    
+                    input.addEventListener('input', (e) => {
+                        if (e.target.value) {
+                            this.state.currentGuess[i] = e.target.value;
+                            if (i < this.state.digitCount - 1) {
+                                inputRow.children[i + 1].focus();
+                            }
+                        }
+                    });
+                    
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !e.target.value && i > 0) {
+                            inputRow.children[i - 1].focus();
+                        }
+                    });
+                    
+                    inputRow.appendChild(input);
+                }
+                
+                // Reset current guess array
+                this.state.currentGuess = Array(this.state.digitCount).fill('');
+            },
+
+            // Generate target number
+            generateTargetNumber: function() {
+                if (this.state.mode === 'daily') {
+                    // Generate a consistent number based on the date for daily challenge
+                    const today = new Date();
+                    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+                    const rng = this.seededRandom(seed);
+                    
+                    this.state.targetNumber = '';
+                    for (let i = 0; i < this.state.digitCount; i++) {
+                        this.state.targetNumber += Math.floor(rng() * 10).toString();
+                    }
+                } else {
+                    // Generate a random number for other modes
+                    this.state.targetNumber = '';
+                    for (let i = 0; i < this.state.digitCount; i++) {
+                        this.state.targetNumber += Math.floor(Math.random() * 10).toString();
+                    }
+                }
+            },
+
+            // Seeded random number generator
+            seededRandom: function(seed) {
+                return function() {
+                    seed = (seed * 9301 + 49297) % 233280;
+                    return seed / 233280;
+                };
+            },
+
+            // Add a digit to the current guess
+            addDigit: function(digit) {
+                if (this.state.gameOver) return;
+                
+                const emptyIndex = this.state.currentGuess.indexOf('');
+                if (emptyIndex !== -1) {
+                    this.state.currentGuess[emptyIndex] = digit;
+                    document.querySelectorAll('.digit-input')[emptyIndex].value = digit;
+                    
+                    if (emptyIndex < this.state.digitCount - 1) {
+                        document.querySelectorAll('.digit-input')[emptyIndex + 1].focus();
+                    }
+                }
+            },
+
+            // Remove the last digit from the current guess
+            removeLastDigit: function() {
+                if (this.state.gameOver) return;
+                
+                for (let i = this.state.digitCount - 1; i >= 0; i--) {
+                    if (this.state.currentGuess[i] !== '') {
+                        this.state.currentGuess[i] = '';
+                        document.querySelectorAll('.digit-input')[i].value = '';
+                        document.querySelectorAll('.digit-input')[i].focus();
+                        break;
+                    }
+                }
+            },
+
+            // Clear the input
+            clearInput: function() {
+                if (this.state.gameOver) return;
+                
+                this.state.currentGuess = Array(this.state.digitCount).fill('');
+                document.querySelectorAll('.digit-input').forEach(input => {
+                    input.value = '';
+                });
+                document.querySelectorAll('.digit-input')[0].focus();
+            },
+
+            // Submit the current guess
+            submitGuess: function() {
+                if (this.state.gameOver) return;
+                
+                // Check if all digits are filled
+                if (this.state.currentGuess.includes('')) {
+                    this.showMessage('Please enter all digits', 'error');
+                    return;
+                }
+                
+                const guess = this.state.currentGuess.join('');
+                
+                // Add to guesses
+                this.state.guesses.push(guess);
+                
+                // Check if correct
+                const isCorrect = guess === this.state.targetNumber;
+                
+                // Generate feedback
+                const feedback = this.generateFeedback(guess);
+                
+                // Add guess to display
+                this.addGuessToDisplay(guess, feedback);
+                
+                // Clear input for next guess
+                this.clearInput();
+                
+                // Check if game is over
+                if (isCorrect) {
+                    this.endGame(true);
+                } else if (this.state.guesses.length >= this.state.maxGuesses) {
+                    this.endGame(false);
+                }
+            },
+
+            // Generate feedback for a guess
+            generateFeedback: function(guess) {
+                const feedback = [];
+                const targetCopy = this.state.targetNumber.split('');
+                const guessCopy = guess.split('');
+                
+                // First pass: check for correct digits in correct positions
+                for (let i = 0; i < this.state.digitCount; i++) {
+                    if (guessCopy[i] === targetCopy[i]) {
+                        feedback[i] = 'correct';
+                        targetCopy[i] = null;
+                        guessCopy[i] = null;
+                    }
+                }
+                
+                // Second pass: check for correct digits in wrong positions
+                for (let i = 0; i < this.state.digitCount; i++) {
+                    if (guessCopy[i] !== null) {
+                        const targetIndex = targetCopy.indexOf(guessCopy[i]);
+                        if (targetIndex !== -1) {
+                            feedback[i] = 'partial';
+                            targetCopy[targetIndex] = null;
+                        } else {
+                            feedback[i] = 'incorrect';
+                        }
+                    }
+                }
+                
+                return feedback;
+            },
+
+            // Add a guess to the display
+            addGuessToDisplay: function(guess, feedback) {
+                const guessesContainer = document.getElementById('guesses');
+                const guessRow = document.createElement('div');
+                guessRow.className = 'guess-row';
+                
+                for (let i = 0; i < this.state.digitCount; i++) {
+                    const digitElement = document.createElement('div');
+                    digitElement.className = `guess-digit ${feedback[i]}`;
+                    digitElement.textContent = guess[i];
+                    guessRow.appendChild(digitElement);
+                }
+                
+                guessesContainer.appendChild(guessRow);
+            },
+
+            // End the game
+            endGame: function(won) {
+                this.state.gameOver = true;
+                this.state.won = won;
+                
+                // Update stats
+                this.state.stats.played++;
+                if (won) {
+                    this.state.stats.won++;
+                    this.state.stats.currentStreak++;
+                    if (this.state.stats.currentStreak > this.state.stats.maxStreak) {
+                        this.state.stats.maxStreak = this.state.stats.currentStreak;
+                    }
+                } else {
+                    this.state.stats.currentStreak = 0;
+                }
+                
+                if (this.state.mode === 'daily') {
+                    this.state.stats.lastPlayed = new Date().toDateString();
+                }
+                
+                this.saveStats();
+                
+                // Show game over message
+                if (won) {
+                    this.showMessage(`Congratulations! You guessed the number in ${this.state.guesses.length}/${this.state.maxGuesses} tries.`, 'success');
+                } else {
+                    this.showMessage(`Game over! The number was ${this.state.targetNumber}.`, 'error');
+                }
+                
+                // Disable input
+                document.querySelectorAll('.digit-input').forEach(input => {
+                    input.disabled = true;
+                });
+                
+                // Change submit button to play again
+                const submitButton = document.getElementById('submit-guess');
+                submitButton.textContent = 'Play Again';
+                submitButton.addEventListener('click', () => {
+                    if (this.state.mode === 'daily') {
+                        this.showMessage('Come back tomorrow for a new daily challenge!', 'error');
+                    } else {
+                        this.resetGame();
+                        this.startGame();
+                    }
+                }, { once: true });
+            },
+
+            // Reset the game
+            resetGame: function() {
+                document.querySelectorAll('.digit-input').forEach(input => {
+                    input.disabled = false;
+                });
+                
+                document.getElementById('submit-guess').textContent = 'Guess';
+                
+                // Remove any messages
+                const existingMessage = document.querySelector('.message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+            },
+
+            // Show a message
+            showMessage: function(text, type) {
+                // Remove any existing message
+                const existingMessage = document.querySelector('.message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+                
+                const message = document.createElement('div');
+                message.className = `message ${type}`;
+                message.textContent = text;
+                
+                const gameContainer = document.querySelector('.game-container');
+                gameContainer.insertBefore(message, document.getElementById('guesses'));
+                
+                // Auto-remove error messages after 3 seconds
+                if (type === 'error' && !this.state.gameOver) {
+                    setTimeout(() => {
+                        message.remove();
+                    }, 3000);
+                }
+            },
+
+            // Show message when daily challenge already played
+            showAlreadyPlayedMessage: function() {
+                const gameContainer = document.querySelector('.game-container');
+                gameContainer.innerHTML = `
+                    <div class="message">
+                        <h3>You've already played today's challenge!</h3>
+                        <p>Come back tomorrow for a new challenge, or switch to Practice Mode to play more.</p>
+                    </div>
+                `;
+            },
+
+            // Share results
+            shareResults: function() {
+                if (!this.state.gameOver) {
+                    this.showMessage('Finish the game first to share your results!', 'error');
+                    return;
+                }
+                
+                let shareText = `NumberNinja ${this.state.mode.charAt(0).toUpperCase() + this.state.mode.slice(1)} Mode\n`;
+                shareText += `${this.state.won ? 'Solved' : 'Failed'} in ${this.state.guesses.length}/${this.state.maxGuesses} attempts\n\n`;
+                
+                // Add emoji grid representation of guesses
+                this.state.guesses.forEach(guess => {
+                    const feedback = this.generateFeedback(guess);
+                    const emojiRow = feedback.map(f => {
+                        if (f === 'correct') return '🟩';
+                        if (f === 'partial') return '🟨';
+                        return '⬛';
+                    }).join('');
+                    shareText += emojiRow + '\n';
+                });
+                
+                shareText += '\nPlay at: numberninja.netlify.app';
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareText)
+                    .then(() => {
+                        this.showMessage('Results copied to clipboard!', 'success');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        this.showMessage('Failed to copy results. Please try again.', 'error');
+                    });
+            }
+        };
+
+        // Initialize the game when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            numberNinja.init();
+        });
+    </script>
+</body>
+</html>
