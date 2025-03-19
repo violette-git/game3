@@ -1,7 +1,7 @@
-# Game Concept 3: NumberNinja
+# Game Concept 3: numbaninja
 
 ## Game Overview
-NumberNinja is an ultra-simple number guessing game that combines elements of popular games like Wordle with a focus on numbers instead of words. Players try to guess a secret number within a limited number of attempts, receiving feedback after each guess.
+numbaninja is an ultra-simple number guessing game that combines elements of popular games like Wordle with a focus on numbers instead of words. Players try to guess a secret number within a limited number of attempts, receiving feedback after each guess.
 
 ## Core Gameplay
 

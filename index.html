@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NumberNinja - Daily Number Guessing Game</title>
+    <title>numbaninja - Daily Number Guessing Game</title>
     <style>
         :root {
             --primary-color: #4a148c;
@@ -276,7 +276,7 @@
 </head>
 <body>
     <header>
-        <h1>NumberNinja</h1>
+        <h1>numbaninja</h1>
         <p class="subtitle">Guess the 4-digit number</p>
     </header>
 
@@ -341,7 +341,7 @@
     </div>
 
     <script>
-        const numberNinja = {
+        const numbaninja = {
             // Game state
             state: {
                 mode: 'daily', // 'daily', 'practice', 'easy', 'hard'
@@ -371,7 +371,7 @@
 
             // Load saved statistics from localStorage
             loadStats: function() {
-                const savedStats = localStorage.getItem('numberNinjaStats');
+                const savedStats = localStorage.getItem('numbaninjaStats');
                 if (savedStats) {
                     this.state.stats = JSON.parse(savedStats);
                 }
@@ -380,7 +380,7 @@
 
             // Save statistics to localStorage
             saveStats: function() {
-                localStorage.setItem('numberNinjaStats', JSON.stringify(this.state.stats));
+                localStorage.setItem('numbaninjaStats', JSON.stringify(this.state.stats));
                 this.updateStatsDisplay();
             },
 
@@ -789,7 +789,7 @@
                     return;
                 }
                 
-                let shareText = `NumberNinja ${this.state.mode.charAt(0).toUpperCase() + this.state.mode.slice(1)} Mode\n`;
+                let shareText = `numbaninja ${this.state.mode.charAt(0).toUpperCase() + this.state.mode.slice(1)} Mode\n`;
                 shareText += `${this.state.won ? 'Solved' : 'Failed'} in ${this.state.guesses.length}/${this.state.maxGuesses} attempts\n\n`;
                 
                 // Add emoji grid representation of guesses
@@ -803,7 +803,7 @@
                     shareText += emojiRow + '\n';
                 });
                 
-                shareText += '\nPlay at: numberninja.netlify.app';
+                shareText += '\nPlay at: numbaninja.netlify.app';
                 
                 // Copy to clipboard
                 navigator.clipboard.writeText(shareText)
@@ -819,7 +819,7 @@
 
         // Initialize the game when the DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            numberNinja.init();
+            numbaninja.init();
         });
     </script>
 </body>
